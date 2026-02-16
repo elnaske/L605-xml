@@ -48,19 +48,21 @@ class Document:
 
 
 def is_xml_close_tag(line):
-    pass
+    return line.starts_with("</") and line.endswith(">")
 
 
 def parse_xml_close_tag(line):
-    pass
+    if is_xml_close_tag(line):
+        return line.strip("<>/")
 
 
 def is_xml_open_tag(line):
-    pass
+    return line.starts_with("<") and not line.starts_with("</") and line.endswith(">")
 
 
 def parse_xml_open_tag(line):
-    pass
+    if is_xml_open_tag(line):
+        return line.split()[0].strip('<>')
 
 
 def is_token_line(line):
@@ -80,9 +82,10 @@ def document_to_text(doc):
 
 
 def parse_tt_xml(tt_xml_filepath):
-    pass
+    with open(tt_xml_filepath, "r") as f:
+        lines = f.readlines()
+
 
 
 def to_treetagger_xml(doc):
     pass
-
