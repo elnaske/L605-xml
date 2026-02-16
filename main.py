@@ -1,6 +1,7 @@
+from src.ttxml import *
+
 def main():
-    print("Hello from l605-xml!")
+    pass
 
-
-if __name__ == "__main__":
+if __name__=="__main__":
     main()
