@@ -66,11 +66,13 @@ def parse_xml_open_tag(line):
 
 
 def is_token_line(line):
-    pass
+    return '\t' in line and not line.starts_with('<')
 
 
 def parse_token_line(line):
-    pass
+    if is_token_line(line):
+        fields = line.split('\t')
+        return Token(*fields)
 
 
 def sentence_to_text(sentence):
@@ -84,6 +86,9 @@ def document_to_text(doc):
 def parse_tt_xml(tt_xml_filepath):
     with open(tt_xml_filepath, "r") as f:
         lines = f.readlines()
+
+    for line in lines:
+        pass
 
 
 
