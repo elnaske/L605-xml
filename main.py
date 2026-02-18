@@ -1,7 +1,8 @@
 from src.ttxml import *
 
 def main():
-    pass
+    line = "Interview	NN	interview	NN1	NOUN	root	Inter-view"
+    print(parse_token_line(line))
 
 if __name__=="__main__":
     main()

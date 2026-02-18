@@ -48,17 +48,17 @@ class Document:
 
 
 def is_xml_close_tag(line):
-    return line.starts_with("</") and line.endswith(">")
+    return line.startswith("</") and line.endswith(">")
 
 
 def parse_xml_close_tag(line):
-    if is_xml_close_tag(line):
+    if not is_xml_close_tag(line):
         raise ValueError("Line does not contain an XML close tag.")
     return line.strip("<>/")
 
 
 def is_xml_open_tag(line):
-    return line.starts_with("<") and not line.starts_with("</") and line.endswith(">")
+    return line.startswith("<") and not line.startswith("</") and line.endswith(">")
 
 
 def parse_xml_open_tag(line):
@@ -68,13 +68,15 @@ def parse_xml_open_tag(line):
 
 
 def is_token_line(line):
-    return '\t' in line and not line.starts_with('<')
+    return '\t' in line and not line.startswith('<')
 
 
 def parse_token_line(line):
-    if is_token_line(line):
-        fields = line.split('\t')
-        return Token(*fields)
+    if not is_token_line(line):
+        raise ValueError("Line does not contain any tokens.")
+    
+    fields = line.split('\t')
+    return Token(*fields)
 
 
 def sentence_to_text(sentence):
