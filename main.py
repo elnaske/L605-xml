@@ -1,8 +1,9 @@
 from src.ttxml import *
 
 def main():
-    line = "Interview	NN	interview	NN1	NOUN	root	Inter-view"
-    print(parse_token_line(line))
+    doc = parse_tt_xml("data.xml")
+    print(doc.paragraphs[0].sentences[0].tokens[0].word)
+    print(len(doc.paragraphs[0].sentences))
 
 if __name__=="__main__":
     main()
