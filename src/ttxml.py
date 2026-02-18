@@ -53,7 +53,8 @@ def is_xml_close_tag(line):
 
 def parse_xml_close_tag(line):
     if is_xml_close_tag(line):
-        return line.strip("<>/")
+        raise ValueError("Line does not contain an XML close tag.")
+    return line.strip("<>/")
 
 
 def is_xml_open_tag(line):
@@ -61,8 +62,9 @@ def is_xml_open_tag(line):
 
 
 def parse_xml_open_tag(line):
-    if is_xml_open_tag(line):
-        return line.split()[0].strip('<>')
+    if not is_xml_open_tag(line):
+        raise ValueError("Line does not contain an XML open tag.")
+    return line.split()[0].strip('<>')
 
 
 def is_token_line(line):
