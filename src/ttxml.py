@@ -19,8 +19,12 @@ class Token:
 
 class Sentence:
     def __init__(self, sent_type=None, transition=None):
-        self.type = sent_type
-        self.transition = transition
+        # self.type = sent_type
+        # self.transition = transition
+        self.args = {
+            "type": sent_type,
+            "transition": transition,
+        }
         self.tokens = []
         self.speaker = None
 
@@ -32,7 +36,9 @@ class Sentence:
 
 
 class Paragraph:
-    def __init__(self):
+    def __init__(self, tag):
+        self.tag = tag
+        self.args = {}
         self.sentences = []
 
     def __repr__(self):
@@ -40,8 +46,9 @@ class Paragraph:
 
 
 class Document:
-    def __init__(self, doc_id=None):
-        self.id = doc_id
+    def __init__(self, args):
+        self.args = args
+        
         self.paragraphs = []
 
     def __repr__(self):
@@ -69,7 +76,8 @@ def parse_xml_open_tag(line):
     tag_name = line.split()[0].strip('<>')
     attributes_dict = {}
 
-    pattern = r'\b(\w+)="#?([\w-]+)"'
+    # pattern = r'\b(\w+)="#?([\w-]+)"'
+    pattern = r'\b(\w+)="#?(.+?)"'
 
     for arg in re.findall(pattern, line):
         k, v = arg
@@ -125,15 +133,13 @@ def parse_tt_xml(tt_xml_filepath):
         if is_xml_open_tag(line):
             tag, args = parse_xml_open_tag(line)
             if tag == "text":
-                # args = line.split()
-                # id = args[1].split('=')[1].strip('"')
-                doc = Document(args["id"])
+                # doc = Document(args["id"])
+                doc = Document(args)
             if tag == "s":
-                # args = line.split()
-                # sent_args = [args[i].split('=')[1].strip('"') for i in range(1,len(args))]
                 current_sentence = Sentence(args["type"], args["transition"])
             if tag in ["head", "p", "sp", "caption"]:
-                current_paragraph = Paragraph()
+                current_paragraph = Paragraph(tag)
+                current_paragraph.args = args
             if tag == "sp":
                 current_speaker = args["who"]
 
@@ -156,20 +162,31 @@ def parse_tt_xml(tt_xml_filepath):
 
 
 def to_treetagger_xml(doc, filename):
-    lines = [f'<text id="{doc.id}">']
+    # lines = [f'<text id="{doc.id}">']
+    line = "<text"
+    for k, v in doc.args.items():
+        line += f' {k}="{v}"'
+    line += ">"
+
+    lines = [line]
 
     for p in doc.paragraphs:
-        lines += ["<p>"]
+        line = f"<{p.tag}"
+        for k, v in p.args.items():
+            line += f' {k}="{v}"'
+        line += ">"
+
+        lines += [line]
 
         for s in p.sentences:
-            lines += [f'<s type="{s.type}" transition="{s.transition}">']
+            lines += [f'<s type="{s.args["type"]}" transition="{s.args["transition"]}">']
             
             for t in s.tokens:
                 lines += ['\t'.join([t.word, t.penn_pos, t.lemma, t.claws_pos, t.upos, t.deprel, t.morph])]
 
             lines += ["</s>"]
         
-        lines += ["</p>"]
+        lines += [f"</{p.tag}>"]
 
     lines += ["</text>"]
 
