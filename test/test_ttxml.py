@@ -45,13 +45,13 @@ def test_is_token_line(open_tag_line, close_tag_line, token_line):
     assert not is_token_line(open_tag_line)
     assert not is_token_line(close_tag_line)
 
-# def test_parse_token_line(open_tag_line, close_tag_line, token_line):
-#     assert parse_token_line(token_line) == Token("Interview", "NN", "interview", "NN1", "NOUN", "root", "Inter-view")
+def test_parse_token_line(open_tag_line, close_tag_line, token_line):
+    assert parse_token_line(token_line) == Token("Interview", "NN", "interview", "NN1", "NOUN", "root", "Inter-view")
 
-#     with pytest.raises(ValueError):
-#         parse_token_line(close_tag_line)
-#     with pytest.raises(ValueError):
-#         parse_token_line(open_tag_line)
+    with pytest.raises(ValueError):
+        parse_token_line(close_tag_line)
+    with pytest.raises(ValueError):
+        parse_token_line(open_tag_line)
 
 
 # def test_parse_token_line(line):

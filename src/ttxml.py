@@ -69,7 +69,7 @@ def parse_xml_open_tag(line):
     tag_name = line.split()[0].strip('<>')
     attributes_dict = {}
 
-    pattern = r'\b(\w+)="(\w+)"'
+    pattern = r'\b(\w+)="#?([\w-]+)"'
 
     for arg in re.findall(pattern, line):
         k, v = arg
@@ -91,11 +91,24 @@ def parse_token_line(line):
 
 
 def sentence_to_text(sentence):
-    pass
+    res = ""
+    for i, t in enumerate(sentence.tokens):
+        if t.upos != "PUNCT" and i > 0:
+            res += " "
+        res += t.word
+    return res
 
 
 def document_to_text(doc):
-    pass
+    res = ""
+    for i, p in enumerate(doc.paragraphs):
+        if i > 0:
+            res += '\n'
+        for j, s in enumerate(p.sentences):
+            if j > 0:
+                res += ' '
+            res += sentence_to_text(s)
+    return res
 
 
 def parse_tt_xml(tt_xml_filepath):
@@ -142,5 +155,25 @@ def parse_tt_xml(tt_xml_filepath):
 
 
 
-def to_treetagger_xml(doc):
-    pass
+def to_treetagger_xml(doc, filename):
+    lines = [f'<text id="{doc.id}">']
+
+    for p in doc.paragraphs:
+        lines += ["<p>"]
+
+        for s in p.sentences:
+            lines += [f'<s type="{s.type}" transition="{s.transition}">']
+            
+            for t in s.tokens:
+                lines += ['\t'.join([t.word, t.penn_pos, t.lemma, t.claws_pos, t.upos, t.deprel, t.morph])]
+
+            lines += ["</s>"]
+        
+        lines += ["</p>"]
+
+    lines += ["</text>"]
+
+    lines = '\n'.join(lines)
+
+    with open(filename, "w") as f:
+        f.write(lines)
